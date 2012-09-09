@@ -1,0 +1,52 @@
+<!doctype html>
+<html ng-app>
+<head>
+	<title>Todo Demo - Ribao Wei</title>
+	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.2/angular.min.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/1.7.0/moment.min.js"></script>
+	<script src="todo.js"></script>
+	<style type="text/css">
+		.overdue-true {
+			color: red;
+		}
+
+		.overdue-false {
+			color: green;
+		}
+	</style>
+</head>
+<body>
+<h2>Todo</h2>
+<div ng-controller="TodoCtrl">
+	<div>
+		<h3>Create a new task</h3>
+		<form ng-submit="addTodo()">
+			task: <input type="text" ng-model="todoText" size="30" placeholder="add new todo here" required>
+			due: <input type="date" ng-model="todoDue">
+			<input type="submit" value="add">
+		</form>
+	</div>
+	<div>
+		<h3>Pending tasks</h3>
+		<ul>
+			<li ng-repeat="todo in pending() | orderBy: 'due'">
+				{{todo.text}} <span ng-show="todo.due" class="overdue-{{isOverDue(todo)}}">due: {{getDate(todo)}}</span>
+				<a href="" ng-click="archive(todo)">Done</a>
+			</li>
+		</ul>
+	</div>
+	<div>
+		<h3>Tasks done</h3>
+		<ul>
+			<li ng-repeat="todo in finished() | orderBy: 'due'">
+				{{todo.text}} <span ng-show="todo.due">due: {{getDate(todo)}}</span>
+			</li>
+		</ul>
+	</div>
+</div>
+<form>
+</form>
+</div>
+</body>
+</html>
