@@ -107,7 +107,7 @@ function timeToNumber(time){
 }
 
 function numberToTime(number){
-	return moment(number).format("YYYY-MM-DD");
+	return number ? moment(number).format("YYYY-MM-DD") : "";
 }
 
 function GUID(){
