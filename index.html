@@ -19,7 +19,7 @@
 <body>
 <h2>Todo</h2>
 <div ng-controller="TodoCtrl">
-	<div>
+	<div ng-show="!editMode">
 		<h3>Create a new task</h3>
 		<form ng-submit="addTodo()">
 			task: <input type="text" ng-model="todoText" size="30" placeholder="add new todo here" required>
@@ -27,13 +27,24 @@
 			<input type="submit" value="add">
 		</form>
 	</div>
+	<div ng-show="editMode">
+		<h3>Edit task</h3>
+		<form ng-submit="saveEditTodo()">
+			task: <input type="text" ng-model="todoTextEdit" size="30" required>
+			due: <input type="date" ng-model="todoDueEdit">
+			<input type="submit" value="save">
+		</form>
+	</div>
 	<div>
 		<h3>Pending tasks</h3>
 		<ul>
 			<li ng-repeat="todo in pending() | orderBy: 'due'">
 				{{todo.text}} <span ng-show="todo.due" class="overdue-{{isOverDue(todo)}}">due: {{getDate(todo)}}</span>
+				<span ng-show="!editMode">
 				<a href="" ng-click="archive(todo)">Done</a>
 				<a href="" ng-click="remove(todo)">Delete</a>
+				<a href="" ng-click="edit(todo)">Edit</a>
+				</span>
 			</li>
 		</ul>
 	</div>
