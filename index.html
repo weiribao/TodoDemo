@@ -6,6 +6,8 @@
 	<script src="/socket.io/socket.io.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/1.7.0/moment.min.js"></script>
 	<script src="todo.js"></script>
+	<link rel="stylesheet" type="text/css" href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css">
+	<link rel="stylesheet" type="text/css" href="http://twitter.github.com/bootstrap/assets/css/bootstrap-responsive.css">
 	<style type="text/css">
 		.overdue-true {
 			color: red;
@@ -14,28 +16,65 @@
 		.overdue-false {
 			color: green;
 		}
+
+		.hero-unit p{
+			font-size: 14px;
+			line-height: 14px;
+		}
+
+		.hero-unit li{
+			line-height: 18px;
+		}
 	</style>
 </head>
 <body>
-<h2>Todo</h2>
-<div ng-controller="TodoCtrl">
-	<div ng-show="!editMode">
+<div class="container">
+<div class="hero-unit">
+    <h1>TODO</h1>
+    <p>Implemented features: 
+    	<ul>
+    	<li>Required:
+    		<ul> 
+    			<li>Create a new task</li>
+    			<li>Mark a task as done (displayed in archive list)</li>
+    			<li>Show pendding tasks</li>
+    			<li>Data is persisted in MongoDB</li>
+    		</ul>
+    	</li>
+    	<li>Bonus:
+    		<ul>
+    			<li>Add a due day to task</li>
+    			<li>Tasks are ordered by due date</li>
+    			<li>Overdued task is color in red</li>
+    			<li>Source code is hosted in github</li>
+    			<li>Add the ability to edit and delete a task</li>
+    		</ul>
+    	</li>
+    </ul></p>
+    <p>A few notes: <ul>
+    	<li>Front-end uses Angular.js</li>
+    	<li>Socket.io is used to implement data synchronization between browser and server</li>
+    </ul></p>
+</div>
+<div ng-controller="TodoCtrl" class="row">
+	<div ng-show="!editMode" class="span4">
 		<h3>Create a new task</h3>
-		<form ng-submit="addTodo()">
-			task: <input type="text" ng-model="todoText" size="30" placeholder="add new todo here" required>
-			due: <input type="date" ng-model="todoDue">
-			<input type="submit" value="add">
+		<form>
+			task: <input type="text" ng-model="todoText" size="30" placeholder="Describe the task" required> <br>
+			due: <input type="date" ng-model="todoDue"> <br>
+			<a href="" ng-click="addTodo()" class="btn btn-primary">Add</a>
 		</form>
 	</div>
-	<div ng-show="editMode">
+	<div ng-show="editMode" class="span4">
 		<h3>Edit task</h3>
-		<form ng-submit="saveEditTodo()">
-			task: <input type="text" ng-model="todoTextEdit" size="30" required>
-			due: <input type="date" ng-model="todoDueEdit">
-			<input type="submit" value="save">
+		<form>
+			task: <input type="text" ng-model="todoTextEdit" size="30" required><br>
+			due: <input type="date" ng-model="todoDueEdit"><br>
+			<a href="" ng-click="saveEditTodo()" class="btn btn-primary">Save</a>
+			<a href="" ng-click="cancelEditTodo()" class="btn">Cancel</a>
 		</form>
 	</div>
-	<div>
+	<div class="span4">
 		<h3>Pending tasks</h3>
 		<ul>
 			<li ng-repeat="todo in pending() | orderBy: 'due'">
@@ -48,17 +87,20 @@
 			</li>
 		</ul>
 	</div>
-	<div>
+	<div class="span4">
 		<h3>Tasks done</h3>
 		<ul>
 			<li ng-repeat="todo in finished() | orderBy: 'due'">
 				{{todo.text}} <span ng-show="todo.due">due: {{getDate(todo)}}</span>
+				<span ng-show="!editMode">
+				<a href="" ng-click="remove(todo)">Delete</a>
+				</span>
 			</li>
 		</ul>
 	</div>
 </div>
-<form>
-</form>
 </div>
+</div>
+
 </body>
 </html>

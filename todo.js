@@ -16,7 +16,6 @@ function TodoCtrl($scope){
 	};
 
 	$scope.edit = function(todo){
-		console.log("edit");
 		$scope.editTodo = todo;
 		$scope.editMode = true;
 		$scope.todoTextEdit = todo.text;
@@ -24,12 +23,14 @@ function TodoCtrl($scope){
 	}
 
 	$scope.saveEditTodo = function(){
-		console.log("@@@", $scope.todoTextEdit);
 		$scope.editTodo.text = $scope.todoTextEdit;
 		$scope.editTodo.due = timeToNumber($scope.todoDueEdit);
 		saveTodo($scope.editTodo);
 		$scope.editMode = false;
-		$scope.editTodo = {};
+	}
+
+	$scope.cancelEditTodo = function(){
+		$scope.editMode = false;
 	}
 
 	$scope.pending = function(){
@@ -70,6 +71,9 @@ function TodoCtrl($scope){
 		return todo.due < new Date;
 	}
 
+	//
+	// interactions with server
+	//
 	function getTodos(todos){
 		socket.emit("todos");
 		socket.on("todos", function(todos){
