@@ -33,6 +33,7 @@
 			<li ng-repeat="todo in pending() | orderBy: 'due'">
 				{{todo.text}} <span ng-show="todo.due" class="overdue-{{isOverDue(todo)}}">due: {{getDate(todo)}}</span>
 				<a href="" ng-click="archive(todo)">Done</a>
+				<a href="" ng-click="remove(todo)">Delete</a>
 			</li>
 		</ul>
 	</div>

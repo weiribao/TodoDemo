@@ -3,27 +3,44 @@ var express = require('express'),
     server = require("http").createServer(app),
     io = require("socket.io").listen(server);
 
+var db = require("./db.js");
+
 app.configure(function() {
     app.use(express.static(__dirname));
     app.use(express.directory(__dirname));
 });
 
-var todos = [];
-
-io.sockets.on("connection", function(socket){
+//
+// communicates with client via socket.io
+//
+function runProtocol(socket){
+	// return list of todos
 	socket.on("todos", function(){
-		socket.emit("todos", todos);
+		db.getTodos(function(err, todos){
+			if(!err){
+				socket.emit("todos", todos);	
+			}
+		})
 	});
+	
+	// create/update todo
 	socket.on("todo", function(todo){
-		console.log(todo);
-		for(var i=0;i<todos.length;i++){
-			if(todos[i].id===todo.id){
-				todos[i]=todo;
-				return
+		var p_todo = {};
+		for(var key in todo){
+			if(key[0]!=="$"){
+				p_todo[key]=todo[key];
 			}
 		}
-		todos.push(todo);
+		db.saveTodo(p_todo);
 	})
-})
 
-server.listen(8000);
+	// remove todo
+	socket.on("todo:remove", function(todo){
+		db.removeTodo({_id: todo._id});
+	})
+}
+
+db.run(function(){
+	io.sockets.on("connection", runProtocol);
+	server.listen(8000);
+});

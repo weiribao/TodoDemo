@@ -5,7 +5,6 @@ function TodoCtrl($scope){
 	getTodos();
 
 	$scope.addTodo = function(){
-		console.log($scope.todoDue);
 		var todo = new Todo($scope.todoText, $scope.todoDue);
 		$scope.todos.push(todo);
 		$scope.todoText = "";
@@ -29,6 +28,19 @@ function TodoCtrl($scope){
 		saveTodo(todo);
 	}
 
+	$scope.remove = function(todo){
+		var i=0;
+		while(i<$scope.todos.length){
+			if($scope.todos[i]._id === todo._id){
+				break;
+			} else{
+				i++;
+			}
+		}
+		$scope.todos.splice(i, 1);
+		removeTodo(todo);
+	}
+
 	$scope.getDate = function(todo){
 		return todo.due ? moment(todo.due).format("M/D/YY") : "";
 	}
@@ -38,12 +50,10 @@ function TodoCtrl($scope){
 	}
 
 	function getTodos(todos){
-		console.log("getTodos");
 		socket.emit("todos");
-		socket.on("todos", function(data){
-			console.log("todos received.",data);
+		socket.on("todos", function(todos){
 			$scope.$apply(function(){
-				data.forEach(function(todo){
+				todos.forEach(function(todo){
 					$scope.todos.push(todo);
 				})
 			});
@@ -54,10 +64,14 @@ function TodoCtrl($scope){
 	function saveTodo(todo){
 		socket.emit("todo", todo);
 	}
+
+	function removeTodo(todo){
+		socket.emit("todo:remove", todo);
+	}
 }
 
 function Todo(text, due){
-	this.id = GUID();
+	this._id = GUID();
 	this.text = text;
 	this.done = false;
 	this.due = Date.parse(due)+(new Date).getTimezoneOffset()*60*1000;
